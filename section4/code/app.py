@@ -10,12 +10,19 @@ items = []
 
 class Item(Resource):
     def get(self, name):    #defines the get http method
-        for item in items:
-            if item['name'] == name:
-                return item #FLASK-RESTFUL does not require jsonify
-        return {'item': None}, 404 #status code - note return must be in JSON
+        #IMPERATIVE SEARCH
+        #for item in items:
+        #    if item['name'] == name:
+        #        return item #FLASK-RESTFUL does not require jsonify
+        # FUNCTIONAL VERSION next() returns the first item, error raised if no items left or present
+        item = next(filter(lambda x: x['name'] == name, items), None) #else return none
+        return {'item': item}, 200 if item is not None else 404 #status codes
+        # return is JSON
 
     def post(self, name):
+        if next(filter(lambda x: x['name'] == name, items), None):
+            return {'message': "an item with the name '{}' already exists.".format(name)}, 400
+
         data = request.get_json() #add force=True to ignore but risky
                                   #silent=True just returns none instead of error
         item = {'name': name, 'price': data['price']}
