@@ -1,3 +1,4 @@
+from werkzeug.security import safe_str_cmp  #is safe string compare function for py2.7
 from user import User
 
 #{ This was an example user
@@ -19,7 +20,7 @@ username_mapping = {u.username: u for u in users}
 #    }
 #}
 
-userid_mapping = {u.id: u for u in users} 
+userid_mapping = {u.id: u for u in users}
 #{
 #    1: {
 #        'id': 1,
@@ -29,9 +30,9 @@ userid_mapping = {u.id: u for u in users}
 #}
 
 def authenticate(username, password):
-    user = username_mapping.get('username', None)
-        if user and user.password == password:
-            return user
+    user = username_mapping.get(username, None)
+    if user and safe_str_cmp(user.password,password):
+        return user
 
 def identity(payload):
     user_id = payload['identity']
