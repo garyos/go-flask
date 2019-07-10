@@ -9,35 +9,36 @@ items = []
 
 
 class Item(Resource):
-    def get(self, name):    #defines the get http method
-        #IMPERATIVE SEARCH
-        #for item in items:
+    def get(self, name):  # defines the get http method
+        # IMPERATIVE SEARCH
+        # for item in items:
         #    if item['name'] == name:
         #        return item #FLASK-RESTFUL does not require jsonify
         # FUNCTIONAL VERSION next() returns the first item, error raised if no items left or present
-        item = next(filter(lambda x: x['name'] == name, items), None) #else return none
-        return {'item': item}, 200 if item is not None else 404 #status codes
+        item = next(filter(lambda x: x['name'] == name, items), None)  # else return none
+        return {'item': item}, 200 if item is not None else 404  # status codes
         # return is JSON
 
     def post(self, name):
         if next(filter(lambda x: x['name'] == name, items), None):
             return {'message': "an item with the name '{}' already exists.".format(name)}, 400
 
-        data = request.get_json() #add force=True to ignore but risky
-                                  #silent=True just returns none instead of error
+        data = request.get_json()  # add force=True to ignore but risky
+        # silent=True just returns none instead of error
         item = {'name': name, 'price': data['price']}
         items.append(item)
-        return item, 201 #status code
+        return item, 201  # status code
+
 
 class ItemList(Resource):
     def get(self):
         return {'items': items}
 
 
-#code below identical to@app.route('student...') decorator
-api.add_resource(Item, '/item/<string:name>') #i.e http://...../item/<name>
+# code below identical to@app.route('student...') decorator
+api.add_resource(Item, '/item/<string:name>')  # i.e http://...../item/<name>
 api.add_resource(ItemList, '/items')
-app.run(port=5000, debug=True) #html error page generated
+app.run(port=5000, debug=True)  # html error page generated
 
 
 # TEST FIRST DESIGN Approach
